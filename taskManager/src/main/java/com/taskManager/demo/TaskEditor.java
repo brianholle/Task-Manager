@@ -20,34 +20,47 @@ import com.vaadin.flow.spring.annotation.UIScope;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
+
+import static com.taskManager.demo.Constants.TASK_STATUS_OPTIONS;
+import static com.taskManager.demo.Constants.EDITOR_NAME_LABEL;
+import static com.taskManager.demo.Constants.EDITOR_DESC_LABEL;
+import static com.taskManager.demo.Constants.EDITOR_STATUS_LABEL;
+import static com.taskManager.demo.Constants.EDITOR_DATE_LABEL;
+import static com.taskManager.demo.Constants.EDITOR_SAVE_LABEL;
+import static com.taskManager.demo.Constants.EDITOR_CANCEL_LABEL;
+import static com.taskManager.demo.Constants.EDITOR_DELETE_LABEL;
+import static com.taskManager.demo.Constants.EDITOR_SAVE_THEME;
+import static com.taskManager.demo.Constants.EDITOR_DELETE_THEME;
+import static com.taskManager.demo.Constants.DELETE_TASKS_URL;
+import static com.taskManager.demo.Constants.INSERT_TASKS_URL;
+import static com.taskManager.demo.Constants.EDITOR_DATE_ERROR_MSG;
+import static com.taskManager.demo.Constants.EDITOR_DATE_ERROR_MSG_COLOR;
+import static com.taskManager.demo.Constants.GET_TASK_BY_ID_URL;
 
 @SpringComponent
 @UIScope
 public class TaskEditor extends VerticalLayout implements KeyNotifier {
 
-	private final TaskRepository repository;
+	private final RestTemplate restTemplate;
 
 	private Task task;
 
 	// Task Form Fields
-	TextField name = new TextField("Task Name");
-	TextField description = new TextField("Task Description");
-	ComboBox<String> status = new ComboBox<>("Set Task Status");
-	DatePicker dueDate = new DatePicker("Due Date");
-	private final Set<String> statusOptions = new HashSet<String>(
-			Arrays.asList("New","In Progress", "Completed", "Overdue"));
+	TextField name = new TextField(EDITOR_NAME_LABEL);
+	TextField description = new TextField(EDITOR_DESC_LABEL);
+	ComboBox<String> status = new ComboBox<>(EDITOR_STATUS_LABEL);
+	DatePicker dueDate = new DatePicker(EDITOR_DATE_LABEL);
 	
 	
 
 	// Action Buttons
-	Button save = new Button("Save", VaadinIcon.CHECK.create());
-	Button cancel = new Button("Cancel");
-	Button delete = new Button("Delete", VaadinIcon.TRASH.create());
+	Button save = new Button(EDITOR_SAVE_LABEL, VaadinIcon.CHECK.create());
+	Button cancel = new Button(EDITOR_CANCEL_LABEL);
+	Button delete = new Button(EDITOR_DELETE_LABEL, VaadinIcon.TRASH.create());
 	
 	HorizontalLayout actions = new HorizontalLayout(save, cancel, delete);
 	HorizontalLayout form = new HorizontalLayout
@@ -57,10 +70,10 @@ public class TaskEditor extends VerticalLayout implements KeyNotifier {
 	private ChangeHandler changeHandler;
 
 	@Autowired
-	public TaskEditor(TaskRepository repository) {
-		this.repository = repository;
-		status.setItems(statusOptions);
-		status.setValue("New");
+	public TaskEditor() {
+		this.restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory());
+		status.setItems(TASK_STATUS_OPTIONS);
+		status.setValue(TASK_STATUS_OPTIONS.get(0));
 		add(form, actions);
 
 		// bind using naming convention
@@ -69,8 +82,8 @@ public class TaskEditor extends VerticalLayout implements KeyNotifier {
 		// Configure and style components
 		setSpacing(true);
 		setSizeFull();
-		save.getElement().getThemeList().add("primary");
-		delete.getElement().getThemeList().add("error");
+		save.getElement().getThemeList().add(EDITOR_SAVE_THEME);
+		delete.getElement().getThemeList().add(EDITOR_DELETE_THEME);
 
 		addKeyPressListener(Key.ENTER, e -> save());
 
@@ -82,20 +95,20 @@ public class TaskEditor extends VerticalLayout implements KeyNotifier {
 	}
 
 	void delete() {
-		repository.delete(task);
+		restTemplate.postForObject(DELETE_TASKS_URL , task, int.class);
 		changeHandler.onChange();
 	}
 
 	void save() {
 		if(dueDate.isInvalid()) {
 			Notification n = generateNotification(
-					"Please correct the Date and try again.", "#ff3333"
+					EDITOR_DATE_ERROR_MSG, EDITOR_DATE_ERROR_MSG_COLOR
 			);
 			n.open();
-		} else if (!statusOptions.contains(status.getValue())) {
-			status.setValue("New");
+		} else if (!TASK_STATUS_OPTIONS.contains(status.getValue())) {
+			status.setValue(TASK_STATUS_OPTIONS.get(0));
 		}
-		repository.save(task);
+		restTemplate.postForObject(INSERT_TASKS_URL, task, Task.class);
 		changeHandler.onChange();
 	}
 
@@ -111,7 +124,7 @@ public class TaskEditor extends VerticalLayout implements KeyNotifier {
 		final boolean persisted = c.getId() != null;
 		if (persisted) {
 			// Find fresh entity for editing
-			task = repository.findById(c.getId()).get();
+			task = restTemplate.postForObject(GET_TASK_BY_ID_URL , c.getId(), Task.class);;
 		}
 		else {
 			task = c;
@@ -140,9 +153,7 @@ public class TaskEditor extends VerticalLayout implements KeyNotifier {
 		Notification notification = new Notification(content);
 		notification.setDuration(3000);
 
-		String styles = ".notification-style { "
-		        + "  color: " + color + ";"
-		        + " }";
+		String styles = ".notification-style {   color: " + color + ";}";
 
 		StreamRegistration resource = UI.getCurrent().getSession()
 		        .getResourceRegistry()

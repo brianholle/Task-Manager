@@ -1,4 +1,4 @@
-package com.taskManager.demo;
+package com.taskManager.rest;
 
 import java.time.LocalDate;
 
@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Entity
 public class Task {
 
 	@Id
@@ -80,12 +81,12 @@ public class Task {
 	@Override
 	public String toString() {
 		return "Task{" +
-				"id='" + this.id + '\'' +
-				", name='" + this.name + '\'' +
-				", description='" + this.description + '\'' +
-				", status='" + this.status + '\'' +
-				", dueDate='" + this.dueDate + 
-				'}';
+		"id='" + this.id + '\'' +
+		", name='" + this.name + '\'' +
+		", description='" + this.description + '\'' +
+		", status='" + this.status + '\'' +
+		", dueDate='" + this.dueDate + 
+		'}';
 	}
 
 }
