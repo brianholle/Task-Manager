@@ -1,9 +1,9 @@
 docker pull postgres
-cd taskManager
+cd Task_Manager_Frontend
 mvn package
 docker build . -t task-manager-frontend
 cd ..
-cd taskManagerRestService
+cd Task_Manager_Backend
 mvn package
 docker build . -t task-manager-backend
 cd ..
