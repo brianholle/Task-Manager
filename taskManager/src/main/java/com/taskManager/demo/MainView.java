@@ -37,7 +37,10 @@ import static com.taskManager.demo.Constants.GET_EXISTING_TASKS_URL;
 import static com.taskManager.demo.Constants.GET_NEAR_OVERDUE_TASKS_URL;
 import static com.taskManager.demo.Constants.GET_OVERDUE_TASKS_URL;
 import static com.taskManager.demo.Constants.GET_COMPLETED_TASKS_URL;
-
+import static com.taskManager.demo.Constants.TASK_MKANAGER_SPLITTER_POS;
+import static com.taskManager.demo.Constants.TASK_MANAGER_SPLITTER_WIDTH;
+import static com.taskManager.demo.Constants.GRID_WIDTH;
+import static com.taskManager.demo.Constants.STATUS_COLUMN_HEADED;
 
 @Theme(value = Lumo.class, variant = Lumo.DARK)
 @Route
@@ -55,7 +58,7 @@ public class MainView extends VerticalLayout {
 	private final Tab showOverdueTab;
 	private final Tab showCompletedTasksTab;
 	private final Tabs tabBar;
-	private final String TASK_GRID_HEIGHT = "600px";
+	private final String TASK_GRID_HEIGHT = "60%";
 	private final String TASK_GRID_ID_HEIGHT = "50px";
 	private final String TASK_COLUMN_ID = "id";
 	private final String TASK_COLUMN_NAME = "name";
@@ -79,66 +82,45 @@ public class MainView extends VerticalLayout {
 		this.showCompletedTasksTab = new Tab(COMPLETED_TAB_TEXT);
 		this.tabBar = new Tabs(showAllTasksTab, showExistingTasksTab, showNearOverdueTasksTab, 
 				showOverdueTab, showCompletedTasksTab);
+		
+		buildLayout();
+		formatGrid();
+		formatFilter();
+		initializeListeners();
+		listTasks(null);
+	}
 
-		// Build layout
+	private void buildLayout() {
 		HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn, tabBar);
 		HorizontalLayout editorPlaceHolder = new HorizontalLayout(editor);
 		SplitLayout taskManager = new SplitLayout(grid, editorPlaceHolder);
-		taskManager.setSplitterPosition(60);
-		taskManager.setWidth("100%");
+		taskManager.setSplitterPosition(TASK_MKANAGER_SPLITTER_POS);
+		taskManager.setWidth(TASK_MANAGER_SPLITTER_WIDTH);
 		add(actions, taskManager);
+	}
 
-		// Build Grid
-		grid.setHeight(TASK_GRID_HEIGHT);
-		grid.setWidth("100%");
-		grid.setColumns(TASK_COLUMN_ID, TASK_COLUMN_NAME, TASK_COLUMN_DESC);
-		// Enable dynamic styling for coloring status column objects
-		grid.addColumn(TemplateRenderer.<Task> of(
-		        "<div><color style='background:[[item.color]];"
-		        		+ "border-radius: 25px;"
-		        		+ "padding: 20px; "
-		        		+ "width: 200px;"
-		        		+ "height: 150px;'>"
-		        		+ "[[item."+TASK_COLUMN_STATUS+"]]</color></div>")
-		        .withProperty("status", Task::getStatus).withProperty("color",
-		                task -> {
-		                	if (task.getDueDate().compareTo(LocalDate.now()) < 0)
-		                		return TASK_COLOR_PAST_DUE;
-		                	else if (task.getDueDate().compareTo(LocalDate.now()) >= 0 
-		                			&& task.getDueDate().compareTo(LocalDate.now().plusDays(1)) <= 0)
-		                		return TASK_COLOR_NEAR_OVERDUE;
-		                	else
-		                		return TASK_COLOR_GOOD;
-		                }
-		         )).setHeader("Status")
-		        .setKey(TASK_COLUMN_STATUS)
-		        .setSortProperty(TASK_COLUMN_STATUS)
-		        .setSortable(true)
-		        .setComparator((status1, status2) -> status1.getStatus()
-		        		.compareTo(status2.getStatus()));;
-		grid.addColumn(TASK_COLUMN_DUE_DATE);
-		grid.getColumnByKey(TASK_COLUMN_ID).setVisible(false);
-		grid.getColumnByKey(TASK_COLUMN_ID).setWidth(TASK_GRID_ID_HEIGHT).setFlexGrow(0);
-		grid.setColumnReorderingAllowed(true);
-
+	private void formatFilter() {
 		filter.setPlaceholder(TASK_FILTER_PLACEHOLDER_TEXT);
+	}
 
+	private void initializeListeners() {
 		// Wire logic to components
 		// Update grid with filtered content when user changes filter
 		filter.setValueChangeMode(ValueChangeMode.EAGER);
 		filter.addValueChangeListener(e -> listTasks(e.getValue()));
 		tabBar.addSelectedChangeListener(e->{
 			int index = e.getSource().getSelectedIndex();
-			if (index == tabBar.indexOf(showAllTasksTab))
+			if (index == tabBar.indexOf(showAllTasksTab)) {
 				listTasks(null);
-			else if (index == tabBar.indexOf(showExistingTasksTab))
+			} else if (index == tabBar.indexOf(showExistingTasksTab)) {
 				listExistingTasks();
-			else if (index == tabBar.indexOf(showNearOverdueTasksTab))
+			} else if (index == tabBar.indexOf(showNearOverdueTasksTab)) {
 				listNearOverdueTasks();
-			else if (index == tabBar.indexOf(showOverdueTab))
+			} else if (index == tabBar.indexOf(showOverdueTab)) {
 				listOverdueTasks();
-			else if (index == tabBar.indexOf(showCompletedTasksTab))
+			} else if (index == tabBar.indexOf(showCompletedTasksTab)) {
 				listCompletedTasks();
+			}
 		});
 
 		// Connect selected task to editor or hide if none is selected
@@ -150,44 +132,75 @@ public class MainView extends VerticalLayout {
 		addNewBtn.addClickListener(e -> {
 			editor.editTask(new Task("", "", TASK_STATUS_OPTIONS.get(0), null));
 		});
-		
-		
+					
 		// Listen for changes made by the editor, refresh data from backend
 		editor.setChangeHandler(() -> {
 			editor.setVisible(false);
 			listTasks(filter.getValue());
 		});
-
-		// Load grid
-		listTasks(null);
 	}
 
-	void listTasks(String filterText) {
+	private void formatGrid() {
+		// Build Grid
+		grid.setHeight(TASK_GRID_HEIGHT);
+		grid.setWidth(GRID_WIDTH);
+		grid.setColumns(TASK_COLUMN_ID, TASK_COLUMN_NAME, TASK_COLUMN_DESC);
+		// Enable dynamic styling for coloring status column objects
+		grid.addColumn(TemplateRenderer.<Task> of(
+		        "<div><color style='background:[[item.color]];"
+		        		+ "border-radius: 25px;"
+		        		+ "padding: 20px; "
+		        		+ "width: 200px;"
+		        		+ "height: 150px;'>"
+		        		+ "[[item."+TASK_COLUMN_STATUS+"]]</color></div>")
+		        .withProperty("status", Task::getStatus).withProperty("color",
+		                task -> {
+		                	if (task.getDueDate().compareTo(LocalDate.now()) < 0) {
+		                		return TASK_COLOR_PAST_DUE;
+		                	} else if (task.getDueDate().compareTo(LocalDate.now()) >= 0 
+		                			&& task.getDueDate().compareTo(LocalDate.now().plusDays(1)) <= 0) {
+		                		return TASK_COLOR_NEAR_OVERDUE;
+		                	} else {
+		                		return TASK_COLOR_GOOD;
+		                	}
+		                }
+		         )).setHeader(STATUS_COLUMN_HEADED)
+		        .setKey(TASK_COLUMN_STATUS)
+		        .setSortProperty(TASK_COLUMN_STATUS)
+		        .setSortable(true)
+		        .setComparator((status1, status2) -> status1.getStatus()
+		        		.compareTo(status2.getStatus()));;
+		grid.addColumn(TASK_COLUMN_DUE_DATE);
+		grid.getColumnByKey(TASK_COLUMN_ID).setVisible(false);
+		grid.getColumnByKey(TASK_COLUMN_ID).setWidth(TASK_GRID_ID_HEIGHT).setFlexGrow(0);
+		grid.setColumnReorderingAllowed(true);
+	}
+
+	private void listTasks(String filterText) {
 		if (StringUtils.isEmpty(filterText)) {
 			restTemplate.getForObject(UPDATE_OVERDUE_TASKS_URL, int.class);
 			grid.setItems(restTemplate.getForObject(GET_ALL_TASKS_URL, Task[].class));
-		}
-		else {
+		} else {
 			grid.setItems(restTemplate.postForObject(GET_TASKS_NAME_STARTS_WITH_URL, filterText, Task[].class));
 		}
 	}
 	
-	void listExistingTasks() {
+	private void listExistingTasks() {
 		restTemplate.getForObject(UPDATE_OVERDUE_TASKS_URL, int.class);
 		grid.setItems(restTemplate.getForObject(GET_EXISTING_TASKS_URL, Task[].class));
 	}
 	
-	void listNearOverdueTasks() {
+	private void listNearOverdueTasks() {
 		restTemplate.getForObject(UPDATE_OVERDUE_TASKS_URL, int.class);
 		grid.setItems(restTemplate.getForObject(GET_NEAR_OVERDUE_TASKS_URL, Task[].class));
 	}
 	
-	void listOverdueTasks() {
+	private void listOverdueTasks() {
 		restTemplate.getForObject(UPDATE_OVERDUE_TASKS_URL, int.class);
 		grid.setItems(restTemplate.getForObject(GET_OVERDUE_TASKS_URL, Task[].class));
 	}
 	
-	void listCompletedTasks() {
+	private void listCompletedTasks() {
 		restTemplate.getForObject(UPDATE_OVERDUE_TASKS_URL, int.class);
 		grid.setItems(restTemplate.getForObject(GET_COMPLETED_TASKS_URL, Task[].class));
 	}

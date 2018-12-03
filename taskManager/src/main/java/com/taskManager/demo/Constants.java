@@ -28,6 +28,11 @@ public final class Constants {
 	public static final String OVERDUE_TAB_TEXT = "Overdue Tasks";
 	public static final String COMPLETED_TAB_TEXT = "Completed Tasks";
 	public static final String TASK_FILTER_PLACEHOLDER_TEXT = "Filter by Task Name";
+	public static final int TASK_MKANAGER_SPLITTER_POS = 60;
+	public static final String TASK_MANAGER_SPLITTER_WIDTH = "100%";
+	public static final String GRID_WIDTH = "100%";
+	public static final String STATUS_COLUMN_HEADED = "Status";
+
 	
 	public static final String EDITOR_NAME_LABEL = "Task Name";
 	public static final String EDITOR_DESC_LABEL = "Task Description";

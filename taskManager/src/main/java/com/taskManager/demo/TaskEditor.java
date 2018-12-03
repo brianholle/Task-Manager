@@ -54,8 +54,6 @@ public class TaskEditor extends VerticalLayout implements KeyNotifier {
 	TextField description = new TextField(EDITOR_DESC_LABEL);
 	ComboBox<String> status = new ComboBox<>(EDITOR_STATUS_LABEL);
 	DatePicker dueDate = new DatePicker(EDITOR_DATE_LABEL);
-	
-	
 
 	// Action Buttons
 	Button save = new Button(EDITOR_SAVE_LABEL, VaadinIcon.CHECK.create());
@@ -131,18 +129,12 @@ public class TaskEditor extends VerticalLayout implements KeyNotifier {
 			task = c;
 		}
 		cancel.setVisible(persisted);
-
-		// Bind Task properties to similarly named fields
 		binder.setBean(task);
-
 		setVisible(true);
-
-		// Focus name initially
 		name.focus();
 	}
 
 	public void setChangeHandler(ChangeHandler h) {
-		// ChangeHandler is notified when either save or delete
 		changeHandler = h;
 	}
 	
