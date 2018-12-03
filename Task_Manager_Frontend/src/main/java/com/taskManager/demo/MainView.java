@@ -58,6 +58,7 @@ public class MainView extends VerticalLayout {
 	private final Tab showOverdueTab;
 	private final Tab showCompletedTasksTab;
 	private final Tabs tabBar;
+	private final Button btn;
 	private final String TASK_GRID_HEIGHT = "600px";
 	private final String TASK_GRID_ID_HEIGHT = "50px";
 	private final String TASK_COLUMN_ID = "id";
@@ -82,6 +83,7 @@ public class MainView extends VerticalLayout {
 		this.showCompletedTasksTab = new Tab(COMPLETED_TAB_TEXT);
 		this.tabBar = new Tabs(showAllTasksTab, showExistingTasksTab, showNearOverdueTasksTab, 
 				showOverdueTab, showCompletedTasksTab);
+		this.btn = new Button ("JVM Date:" + LocalDate.now().toString());
 		
 		buildLayout();
 		formatGrid();
@@ -99,7 +101,7 @@ public class MainView extends VerticalLayout {
 		SplitLayout taskManager = new SplitLayout(grid, editorPlaceHolder);
 		taskManager.setSplitterPosition(TASK_MKANAGER_SPLITTER_POS);
 		taskManager.setWidth(TASK_MANAGER_SPLITTER_WIDTH);
-		add(actions, taskManager);
+		add(actions, taskManager, btn);
 	}
 
 	private void formatFilter() {
