@@ -13,6 +13,7 @@ These instructions will get you a copy of the project up and running on your loc
 Here is a list of things you will need to get the task manager up and running:
 
 [Maven](https://maven.apache.org/download.cgi)
+
 [Docker](https://www.docker.com/)
 
 
