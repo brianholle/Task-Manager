@@ -2,6 +2,8 @@
 
 This is a simple task management application that can be set up and used by one user to keep track of their tasks.
 
+![Task Manager Preview](https://github.com/brianholle/Task-Manager/blob/master/resources/Preview.PNG)
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
@@ -39,7 +41,7 @@ sh taskManagerDockerRun.sh
 If you have any issues with the install script, review the output, remove any images
 the process has added, and re-attempt.
 
-![Task Manager Preview](https://github.com/brianholle/Task-Manager/blob/master/resources/Preview.PNG)
+
 
 
 ## Authors
