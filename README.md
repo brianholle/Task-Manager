@@ -39,7 +39,7 @@ sh taskManagerDockerRun.sh
 If you have any issues with the install script, review the output, remove any images
 the process has added, and re-attempt.
 
-![](https://raw.githubusercontent.com/username/Task-Manager/resources/sample.png)
+![Task Manager Preview](https://github.com/brianholle/Task-Manager/blob/master/resources/Preview.PNG)
 
 
 ## Authors
