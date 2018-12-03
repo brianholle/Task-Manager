@@ -83,7 +83,7 @@ public class MainView extends VerticalLayout {
 		this.showCompletedTasksTab = new Tab(COMPLETED_TAB_TEXT);
 		this.tabBar = new Tabs(showAllTasksTab, showExistingTasksTab, showNearOverdueTasksTab, 
 				showOverdueTab, showCompletedTasksTab);
-		this.btn = new Button ("JVM Date:" + LocalDate.now().toString());
+		this.btn = new Button ("JVM Date: " + LocalDate.now().toString());
 		
 		buildLayout();
 		formatGrid();
