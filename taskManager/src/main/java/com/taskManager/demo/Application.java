@@ -18,7 +18,6 @@ public class Application {
 
 	private static final Logger log = LoggerFactory.getLogger(Application.class);
 	private final RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory());
-	private final String apiUrl = "http://localhost:8080/taskManager";
 	
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class);

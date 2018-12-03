@@ -58,7 +58,7 @@ public class MainView extends VerticalLayout {
 	private final Tab showOverdueTab;
 	private final Tab showCompletedTasksTab;
 	private final Tabs tabBar;
-	private final String TASK_GRID_HEIGHT = "60%";
+	private final String TASK_GRID_HEIGHT = "600px";
 	private final String TASK_GRID_ID_HEIGHT = "50px";
 	private final String TASK_COLUMN_ID = "id";
 	private final String TASK_COLUMN_NAME = "name";
@@ -87,10 +87,13 @@ public class MainView extends VerticalLayout {
 		formatGrid();
 		formatFilter();
 		initializeListeners();
+		
+		// Load grid
 		listTasks(null);
 	}
 
 	private void buildLayout() {
+		// Build layout
 		HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn, tabBar);
 		HorizontalLayout editorPlaceHolder = new HorizontalLayout(editor);
 		SplitLayout taskManager = new SplitLayout(grid, editorPlaceHolder);
