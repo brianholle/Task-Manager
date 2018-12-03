@@ -18,8 +18,7 @@ Here is a list of things you will need to get the task manager up and running:
 
 
 ### Installing
-
-A step by step series of examples that tell you how to get a development env running
+The following is a steb by step set of instructions that will get your development environment up and running.
 
 1. Clone this repository
 
@@ -27,13 +26,14 @@ A step by step series of examples that tell you how to get a development env run
 git clone https://github.com/brianholle/Task-Manager.git
 ```
 
-Enter the downloaded folder
+2. Enter the downloaded folder
 
 ```
 cd Task-Manager
 ```
 
-Run the appropriate set up script for Windows/Linux systems.
+3. Run the appropriate set up script for Windows/Linux systems.
+
 ```
 sh taskManagerDockerRun.sh
 ```
