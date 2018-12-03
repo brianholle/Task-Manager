@@ -63,7 +63,7 @@ public class TaskEditor extends VerticalLayout implements KeyNotifier {
 	Button delete = new Button(EDITOR_DELETE_LABEL, VaadinIcon.TRASH.create());
 	
 	HorizontalLayout actions = new HorizontalLayout(save, cancel, delete);
-	HorizontalLayout form = new HorizontalLayout
+	VerticalLayout form = new VerticalLayout
 			(name, description, status, dueDate);
 
 	Binder<Task> binder = new Binder<>(Task.class);
@@ -90,26 +90,27 @@ public class TaskEditor extends VerticalLayout implements KeyNotifier {
 		// wire action buttons
 		save.addClickListener(e -> save());
 		delete.addClickListener(e -> delete());
-		cancel.addClickListener(e -> editTask(task));
+		cancel.addClickListener(e -> changeHandler.onChange());
 		setVisible(false);
 	}
 
 	void delete() {
-		restTemplate.postForObject(DELETE_TASKS_URL , task, int.class);
+		if (task.getId() != null) restTemplate.postForObject(DELETE_TASKS_URL , task, int.class);
 		changeHandler.onChange();
 	}
 
 	void save() {
-		if(dueDate.isInvalid()) {
+		if(dueDate.isEmpty() || dueDate.isInvalid()) {
 			Notification n = generateNotification(
 					EDITOR_DATE_ERROR_MSG, EDITOR_DATE_ERROR_MSG_COLOR
 			);
 			n.open();
 		} else if (!TASK_STATUS_OPTIONS.contains(status.getValue())) {
 			status.setValue(TASK_STATUS_OPTIONS.get(0));
+		} else {
+			restTemplate.postForObject(INSERT_TASKS_URL, task, Task.class);
+			changeHandler.onChange();
 		}
-		restTemplate.postForObject(INSERT_TASKS_URL, task, Task.class);
-		changeHandler.onChange();
 	}
 
 	public interface ChangeHandler {
@@ -149,9 +150,10 @@ public class TaskEditor extends VerticalLayout implements KeyNotifier {
 		Div content = new Div();
 		content.addClassName("notification-style");
 		content.setText(message);
-
+		
 		Notification notification = new Notification(content);
 		notification.setDuration(3000);
+		notification.setPosition(Notification.Position.TOP_END);
 
 		String styles = ".notification-style {   color: " + color + ";}";
 
@@ -163,7 +165,6 @@ public class TaskEditor extends VerticalLayout implements KeyNotifier {
 		        }));
 		UI.getCurrent().getPage().addStyleSheet(
 		        "base://" + resource.getResourceUri().toString());
-		
 		return notification;
 	}
 }

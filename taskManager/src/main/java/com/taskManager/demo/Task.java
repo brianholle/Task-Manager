@@ -33,13 +33,6 @@ public class Task {
 		this.dueDate = dueDate;
 	}
 	
-	public Task(Long id, String name, String description, String status, LocalDate dueDate) {
-		this.id = id;
-		this.name = name;
-		this.description = description;
-		this.status = status;
-		this.dueDate = dueDate;
-	}
 
 	public Long getId() {
 		return id;

@@ -5,6 +5,7 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.TextField;
@@ -81,10 +82,15 @@ public class MainView extends VerticalLayout {
 
 		// Build layout
 		HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn, tabBar);
-		add(actions, grid, editor);
+		HorizontalLayout editorPlaceHolder = new HorizontalLayout(editor);
+		SplitLayout taskManager = new SplitLayout(grid, editorPlaceHolder);
+		taskManager.setSplitterPosition(60);
+		taskManager.setWidth("100%");
+		add(actions, taskManager);
 
 		// Build Grid
 		grid.setHeight(TASK_GRID_HEIGHT);
+		grid.setWidth("100%");
 		grid.setColumns(TASK_COLUMN_ID, TASK_COLUMN_NAME, TASK_COLUMN_DESC);
 		// Enable dynamic styling for coloring status column objects
 		grid.addColumn(TemplateRenderer.<Task> of(
