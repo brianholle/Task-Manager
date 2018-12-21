@@ -50,10 +50,10 @@ If you are interested in running this project locally either for reasearch or co
 to get you off of the ground. 
 
 If you only wish to run/edit the front-end outside of the docker environment, you will need to make the following changes.
-Firstly, modify the [Constants.java](https://github.com/brianholle/Task-Manager/blob/master/taskManager/src/main/java/com/taskManager/demo/Constants.java) file found in the 'taskManager' project. You will need to change the `API_BASE_URL` value to point to your localhost. 
+Firstly, modify the [Constants.java](https://github.com/brianholle/Task-Manager/blob/master/Task_Manager_Frontend/src/main/java/com/taskManager/demo/Constants.java) file found in the 'taskManager' project. You will need to change the `API_BASE_URL` value to point to your localhost. 
   Ex: `http://localhost:8080/taskManager`
   
-If you wish to run/edit the back-end of this project outside of docker, you will need to modify the [application.properties](https://github.com/brianholle/Task-Manager/blob/master/taskManagerRestService/src/main/resources/application.properties) file to point to your local database.
+If you wish to run/edit the back-end of this project outside of docker, you will need to modify the [application.properties](https://github.com/brianholle/Task-Manager/blob/master/Task_Manager_Backend/src/main/resources/application.properties) file to point to your local database.
   Ex. `jdbc:postgresql://localhost:5432/task_manager`
 
 
